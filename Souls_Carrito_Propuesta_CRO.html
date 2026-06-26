@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Souls · Propuesta de carrito (CRO)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F4E7D6; --cream-deep:#EADBC6; --cream-soft:#FBF5EC;
+    --gold:#BF9F5C; --gold-deep:#A6884A; --gold-tint:#F2E9D6;
+    --ink:#14294A; --ink-soft:#2C4063;
+    --black:#1C1B19; --gray:#8C857B; --gray-soft:#B7B0A6;
+    --line:#ECE6DD; --line-soft:#F3EEE6;
+    --bg:#FFFFFF; --backdrop:#E7DFD2;
+    --shadow:0 24px 60px -20px rgba(28,27,25,.28);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Manrope',system-ui,sans-serif;
+    background:
+      radial-gradient(120% 80% at 50% -10%, #F1E9DC 0%, var(--backdrop) 55%, #DED5C6 100%);
+    color:var(--black);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    padding:28px 18px 60px;
+  }
+
+  /* ---------- Page chrome ---------- */
+  .page-head{max-width:1100px;margin:0 auto 22px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+  .ph-left .kicker{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-deep);font-weight:700}
+  .ph-left h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:6px;color:var(--ink)}
+  .ph-left p{font-size:13.5px;color:#5b5750;margin-top:6px;max-width:520px;line-height:1.5}
+
+  .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .seg{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px;box-shadow:0 2px 8px rgba(28,27,25,.06)}
+  .seg button{border:0;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--gray);padding:8px 16px;border-radius:999px;cursor:pointer;transition:.18s}
+  .seg button.active{background:var(--ink);color:#fff}
+  .seg.gold button.active{background:var(--gold)}
+  .toggle-mej{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 16px;cursor:pointer;font-size:13px;font-weight:700;color:var(--ink);box-shadow:0 2px 8px rgba(28,27,25,.06);transition:.18s}
+  .toggle-mej .dot{width:10px;height:10px;border-radius:50%;background:var(--gray-soft);transition:.18s}
+  .toggle-mej.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .toggle-mej.on .dot{background:var(--gold)}
+
+  /* ---------- Stage ---------- */
+  .stage{max-width:1100px;margin:0 auto;display:flex;gap:34px;align-items:flex-start;justify-content:center}
+  .phone-wrap{flex:0 0 auto}
+  .phone{
+    width:430px;background:var(--bg);border-radius:30px;overflow:hidden;
+    box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.6);position:relative;
+  }
+  .phone-scroll{height:880px;overflow-y:auto;scrollbar-width:thin;scroll-behavior:smooth;position:relative}
+  .phone-scroll::-webkit-scrollbar{width:8px}
+  .phone-scroll::-webkit-scrollbar-thumb{background:#dcd5c9;border-radius:8px}
+  .caption{text-align:center;font-size:12px;color:#6c675f;margin-top:14px;font-weight:600;letter-spacing:.02em}
+  .caption b{color:var(--ink)}
+
+  /* ---------- Cart shared ---------- */
+  .c-head{position:sticky;top:0;z-index:30;background:var(--cream);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--cream-deep)}
+  .c-head .ttl{display:flex;align-items:baseline;gap:9px}
+  .c-head .wm{font-size:18px;font-weight:800;letter-spacing:-.01em;color:var(--black)}
+  .c-head .cnt{font-size:13px;color:var(--gold-deep);font-weight:700}
+  .c-close{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:#6c675f;background:#fff;border:1px solid var(--cream-deep);padding:7px 13px;border-radius:999px;cursor:pointer}
+  .body-pad{padding:16px 18px 20px}
+
+  /* line item */
+  .item{display:grid;grid-template-columns:74px 1fr auto;gap:13px;padding:15px 0;border-bottom:1px solid var(--line)}
+  .item:first-of-type{padding-top:6px}
+  .thumb{width:74px;height:88px;border-radius:11px;background:linear-gradient(150deg,#efe7da,#e3d8c6);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+  .thumb svg{width:46px;height:46px;opacity:.5}
+  .thumb.skin{background:linear-gradient(150deg,#f0e2d2,#e7cdb4)}
+  .it-main{min-width:0}
+  .it-name{font-size:14.5px;font-weight:700;line-height:1.25;color:var(--black)}
+  .it-variant{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:600;color:var(--ink-soft);background:var(--cream-soft);border:1px solid var(--line);padding:3px 9px;border-radius:999px}
+  .lowstock{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#9a5a23;background:#fbeede;border:1px solid #f3dcc0;padding:3px 9px;border-radius:999px;margin-top:7px}
+  .lowstock::before{content:"";width:6px;height:6px;border-radius:50%;background:#d4842f}
+  .qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;margin-top:10px;background:#fff;overflow:hidden}
+  .qty button{width:30px;height:30px;border:0;background:transparent;font-size:17px;color:var(--ink);cursor:pointer;font-weight:600;display:flex;align-items:center;justify-content:center}
+  .qty button:hover{background:var(--cream-soft)}
+  .qty span{min-width:26px;text-align:center;font-size:14px;font-weight:700}
+  .it-right{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:8px}
+  .rm{border:0;background:transparent;color:var(--gray-soft);cursor:pointer;font-size:17px;line-height:1;padding:2px}
+  .rm:hover{color:var(--black)}
+  .price-now{font-size:14.5px;font-weight:800;color:var(--black);text-align:right}
+  .price-was{font-size:12px;color:var(--gray-soft);text-decoration:line-through;text-align:right}
+  .save-chip{font-size:10.5px;font-weight:700;color:var(--gold-deep);background:var(--gold-tint);padding:2px 7px;border-radius:6px}
+
+  /* section titles */
+  .sec-eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--ink);margin:22px 0 12px;display:flex;align-items:center;gap:9px}
+  .sec-eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  /* ===== AFTER-only: reward stack (signature) ===== */
+  .reward{background:linear-gradient(180deg,var(--cream-soft),#fff);border:1px solid var(--cream-deep);border-radius:var(--radius);padding:15px 15px 14px;margin-bottom:6px}
+  .reward-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+  .reward-head{font-size:13px;font-weight:800;color:var(--ink);line-height:1.3}
+  .reward-head b{color:var(--gold-deep)}
+  .ladder{display:flex;gap:7px}
+  .step{flex:1;text-align:center;border-radius:10px;border:1px solid var(--line);background:#fff;padding:8px 4px;position:relative;transition:.2s}
+  .step .pz{font-size:10px;color:var(--gray);font-weight:600;letter-spacing:.02em}
+  .step .pc{font-size:15px;font-weight:800;color:var(--black);margin-top:1px}
+  .step.done{background:var(--gold-tint);border-color:#e6d4a8}
+  .step.done .pc{color:var(--gold-deep)}
+  .step.current{background:var(--gold);border-color:var(--gold-deep);box-shadow:0 6px 14px -6px rgba(191,159,92,.7)}
+  .step.current .pz,.step.current .pc{color:#fff}
+  .step .tick{position:absolute;top:-7px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--gold-deep);color:#fff;font-size:11px;display:none;align-items:center;justify-content:center;border:2px solid #fff}
+  .step.done .tick{display:flex}
+  .ladder-nudge{font-size:12px;color:var(--ink-soft);margin-top:9px;font-weight:600;display:flex;align-items:center;gap:7px}
+  .ladder-nudge svg{width:14px;height:14px;flex:0 0 auto;color:var(--gold-deep)}
+
+  .reward-sep{height:1px;background:var(--line);margin:13px 0 12px}
+
+  .ship{display:flex;flex-direction:column;gap:9px}
+  .ship-msg{font-size:12.5px;font-weight:700;color:var(--black);line-height:1.35}
+  .ship-msg b{color:var(--gold-deep)}
+  .ship-msg.win b{color:var(--ink)}
+  .bar{height:9px;background:var(--cream-deep);border-radius:999px;position:relative;overflow:visible}
+  .bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-deep));border-radius:999px;transition:width .4s cubic-bezier(.4,0,.2,1);position:relative}
+  .node{position:absolute;top:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid var(--cream-deep);display:flex;align-items:center;justify-content:center;z-index:2}
+  .node.hit{border-color:var(--gold-deep);background:var(--gold-deep)}
+  .node svg{width:9px;height:9px;color:var(--gray-soft)}
+  .node.hit svg{color:#fff}
+  .node-labels{display:flex;justify-content:space-between;font-size:10.5px;color:var(--gray);font-weight:600;margin-top:2px}
+  .node-labels .l2{text-align:right}
+  .node-labels .hitL{color:var(--gold-deep)}
+  .suggest-tag{font-size:9.5px;color:var(--gray-soft);font-style:italic}
+
+  /* savings band */
+  .savings-band{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--ink);color:#fff;border-radius:13px;padding:13px 15px;margin-top:14px}
+  .savings-band .sb-l{display:flex;align-items:center;gap:10px}
+  .savings-band .sb-ic{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center}
+  .savings-band .sb-ic svg{width:18px;height:18px;color:var(--gold)}
+  .savings-band .sb-t{font-size:12px;font-weight:600;color:#cdd6e6}
+  .savings-band .sb-amt{font-size:17px;font-weight:800;color:#fff;line-height:1.1}
+
+  /* cross-sell */
+  .xs{display:flex;flex-direction:column;gap:10px}
+  .xcard{display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:13px;padding:11px 12px;background:#fff;transition:.18s}
+  .xcard:hover{border-color:var(--cream-deep);background:var(--cream-soft)}
+  .xthumb{width:54px;height:54px;border-radius:9px;background:linear-gradient(150deg,#efe7da,#e3d8c6);display:flex;align-items:center;justify-content:center;position:relative}
+  .xthumb.skin{background:linear-gradient(150deg,#f0e2d2,#e7cdb4)}
+  .xthumb svg{width:26px;height:26px;opacity:.5}
+  .xbadge{position:absolute;top:-7px;left:-6px;font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--ink);padding:3px 6px;border-radius:6px;white-space:nowrap}
+  .xinfo{min-width:0}
+  .xname{font-size:13px;font-weight:700;line-height:1.2;color:var(--black)}
+  .xprice{display:flex;align-items:center;gap:7px;margin-top:4px}
+  .xnow{font-size:13px;font-weight:800;color:var(--black)}
+  .xwas{font-size:11px;color:var(--gray-soft);text-decoration:line-through}
+  .xnudge{font-size:10.5px;color:var(--gold-deep);font-weight:700;margin-top:4px;display:flex;align-items:center;gap:5px}
+  .xnudge svg{width:11px;height:11px}
+  .add-btn{border:1.5px solid var(--ink);background:#fff;color:var(--ink);font:inherit;font-size:12px;font-weight:700;padding:8px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:.16s}
+  .add-btn:hover{background:var(--ink);color:#fff}
+  .add-btn.added{background:var(--gold-tint);border-color:var(--gold);color:var(--gold-deep);pointer-events:none}
+  /* inline size picker */
+  .size-row{grid-column:1/-1;display:none;gap:6px;align-items:center;padding-top:10px;margin-top:4px;border-top:1px dashed var(--line)}
+  .size-row.show{display:flex;flex-wrap:wrap}
+  .size-row .lbl{font-size:11px;font-weight:700;color:var(--gray);margin-right:2px}
+  .sz{font-size:12px;font-weight:700;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 11px;cursor:pointer;transition:.14s}
+  .sz:hover,.sz.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .sz-confirm{margin-left:auto;font-size:12px;font-weight:700;color:#fff;background:var(--gold);border:0;border-radius:999px;padding:7px 14px;cursor:pointer;opacity:.45;pointer-events:none;transition:.16s}
+  .sz-confirm.ready{opacity:1;pointer-events:auto}
+
+  /* discount collapsed */
+  .promo-row{margin-top:16px}
+  .promo-link{font-size:12.5px;font-weight:700;color:var(--ink);background:none;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:7px;padding:2px 0}
+  .promo-link svg{width:14px;height:14px;transition:.2s}
+  .promo-link.open svg{transform:rotate(45deg)}
+  .promo-box{display:none;margin-top:10px}
+  .promo-box.show{display:block;animation:fade .25s}
+  @keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .promo-input{display:flex;gap:8px}
+  .promo-input input{flex:1;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font:inherit;font-size:13px;background:var(--cream-soft)}
+  .promo-input input::placeholder{color:var(--gray-soft)}
+  .promo-input button{border:0;background:var(--ink);color:#fff;font:inherit;font-weight:700;font-size:13px;padding:0 18px;border-radius:10px;cursor:pointer}
+  .promo-note{font-size:11px;color:var(--gray);margin-top:9px;display:flex;gap:7px;line-height:1.4;background:var(--cream-soft);border-radius:9px;padding:9px 11px}
+  .promo-note svg{width:14px;height:14px;flex:0 0 auto;color:var(--gold-deep);margin-top:1px}
+  .promo-note b{color:var(--ink)}
+
+  /* sticky footer */
+  .foot{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -16px 30px -18px rgba(28,27,25,.18);padding:11px 18px 16px;z-index:25}
+  .trust{display:flex;justify-content:space-between;gap:6px;padding-bottom:11px;margin-bottom:11px;border-bottom:1px solid var(--line-soft)}
+  .trust div{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;color:#5e5a53}
+  .trust svg{width:14px;height:14px;color:var(--gold-deep);flex:0 0 auto}
+  .totrow{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:11px}
+  .totrow .tl{font-size:13px;font-weight:600;color:#5e5a53}
+  .totrow .tl small{display:block;font-size:11px;color:var(--gold-deep);font-weight:700;margin-top:2px}
+  .totrow .tr{text-align:right}
+  .totrow .tr .amt{font-size:22px;font-weight:800;color:var(--black);letter-spacing:-.01em}
+  .totrow .tr .ship{font-size:11px;color:var(--gold-deep);font-weight:700}
+  .express{display:flex;gap:8px;margin-bottom:9px}
+  .xp{flex:1;height:42px;border:0;border-radius:11px;cursor:pointer;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px}
+  .xp.apple{background:#000;color:#fff}
+  .xp.shop{background:#5A31F4;color:#fff}
+  .xp svg{height:16px}
+  .cta{width:100%;height:52px;border:0;border-radius:13px;background:var(--gold);color:#fff;font:inherit;font-size:15.5px;font-weight:800;letter-spacing:.01em;cursor:pointer;box-shadow:0 10px 22px -10px rgba(191,159,92,.85);transition:.16s}
+  .cta:hover{background:var(--gold-deep)}
+  .pay-icons{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:11px;opacity:.85}
+  .pay-icons span{font-size:9px;font-weight:800;color:#fff;padding:3px 6px;border-radius:4px;letter-spacing:.02em}
+  .pi-visa{background:#1A1F71}.pi-mc{background:#EB001B}.pi-amex{background:#2E77BC}.pi-ap{background:#000}.pi-gp{background:#fff;color:#444 !important;border:1px solid var(--line)}
+
+  /* ===== BEFORE view ===== */
+  .before-note{font-size:11px;color:var(--gray);text-align:center;padding:6px 0 0}
+  .b-bar-wrap{padding:14px 18px;background:#fff;border-bottom:1px solid var(--line-soft)}
+  .b-bar-msg{font-size:12.5px;color:#5e5a53;text-align:center;line-height:1.4;margin-bottom:12px}
+  .b-track{height:6px;background:var(--cream-deep);border-radius:999px;position:relative;margin:18px 6px 8px}
+  .b-fill{height:100%;width:48%;background:var(--gold);border-radius:999px}
+  .b-mile{position:absolute;top:50%;transform:translate(-50%,-50%);text-align:center}
+  .b-mile .dotm{width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid var(--cream-deep);display:flex;align-items:center;justify-content:center;margin:0 auto}
+  .b-mile.hit .dotm{background:var(--gold);border-color:var(--gold);color:#fff;font-size:12px}
+  .b-mile .lbm{font-size:9.5px;color:var(--gray);font-weight:600;margin-top:5px;white-space:nowrap}
+  .b-cross{font-size:13px;font-weight:700;color:var(--ink);text-align:center;margin:18px 0 12px}
+  .b-foot{padding:14px 18px 18px;border-top:1px solid var(--line)}
+  .b-disc{display:flex;gap:8px;margin-bottom:14px}
+  .b-disc input{flex:1;border:1px solid var(--line);border-radius:8px;padding:11px;font:inherit;font-size:13px}
+  .b-disc button{border:1px solid var(--ink);background:#fff;color:var(--ink);border-radius:8px;font:inherit;font-weight:700;padding:0 16px;cursor:pointer}
+  .b-line{display:flex;justify-content:space-between;font-size:13px;color:#5e5a53;margin-bottom:8px}
+  .b-tot{display:flex;justify-content:space-between;align-items:center;font-size:16px;font-weight:800;color:var(--black);margin:12px 0 14px}
+  .b-cta{width:100%;height:50px;background:var(--gold);border:0;border-radius:6px;color:var(--black);font:inherit;font-weight:800;font-size:15px;cursor:pointer}
+
+  /* ===== annotations ===== */
+  .anno-badge{position:absolute;z-index:40;width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 4px 10px rgba(20,41,74,.4);cursor:default}
+  .show-anno .anno-badge{display:flex}
+  .show-anno [data-anno-target]{outline:2px dashed var(--gold);outline-offset:3px;border-radius:14px}
+  .legend{flex:0 0 320px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 16px 40px -24px rgba(28,27,25,.35);display:none;align-self:stretch}
+  .legend.show{display:block;animation:fade .3s}
+  .legend h3{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);font-weight:800;margin-bottom:4px}
+  .legend .sub{font-size:12px;color:var(--gray);margin-bottom:16px;line-height:1.5}
+  .lg-item{display:grid;grid-template-columns:26px 1fr;gap:11px;padding:11px 0;border-top:1px solid var(--line-soft)}
+  .lg-item:first-of-type{border-top:0}
+  .lg-n{width:24px;height:24px;border-radius:50%;background:var(--cream);color:var(--gold-deep);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .lg-t b{font-size:13px;color:var(--black);display:block;margin-bottom:3px;line-height:1.3}
+  .lg-t span{font-size:11.5px;color:#6c675f;line-height:1.45}
+  .lg-t em{color:var(--gold-deep);font-style:normal;font-weight:700}
+
+  @media (max-width:920px){
+    .stage{flex-direction:column;align-items:center}
+    .legend{flex:1 1 auto;width:430px;max-width:100%;order:2;margin-top:8px}
+    .page-head{flex-direction:column;align-items:flex-start}
+  }
+  @media (max-width:480px){
+    body{padding:18px 8px 50px}
+    .phone{width:100%}
+    .legend{width:100%}
+  }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <div class="ph-left">
+    <div class="kicker">Souls · CRO · Carrito</div>
+    <h1>Propuesta de rediseño del carrito</h1>
+    <p>El carrito es la mayor fuga del embudo: de <b>1,066</b> que agregan, solo <b>507</b> llegan al pago (~52% se cae aquí). Este rediseño ataca justo ese punto. Toca todo: cambia cantidades, agrega productos y mira cómo responde.</p>
+  </div>
+  <div class="controls">
+    <div class="seg" id="viewSeg">
+      <button data-view="before">Antes</button>
+      <button data-view="after" class="active">Después</button>
+    </div>
+    <button class="toggle-mej on" id="mejBtn"><span class="dot"></span>Ver mejoras</button>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="phone-scroll" id="scroll">
+        <!-- rendered by JS -->
+      </div>
+    </div>
+    <div class="caption" id="cap"><b>Después</b> — carrito propuesto · mobile-first (95% del tráfico es móvil)</div>
+  </div>
+
+  <aside class="legend show" id="legend">
+    <h3>8 mejoras del carrito</h3>
+    <div class="sub">Cada cambio responde a un dato de tu reporte o a la estrategia de junio. Los números aparecen sobre el mockup.</div>
+    <div id="legendList"></div>
+  </aside>
+</div>
+
+<script>
+/* ---------------- ICONS ---------------- */
+const I = {
+  bra:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8c2 0 3 1.5 3 3.5S5 16 3 16M21 8c-2 0-3 1.5-3 3.5S19 16 21 16M3 9h18M7 11.5a2 2 0 1 0 4 0M13 11.5a2 2 0 1 0 4 0"/></svg>',
+  panty:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h18l-1 4c-3 0-5 2-7 5-2-3-4-5-7-5L3 7Z"/></svg>',
+  skin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg>',
+  truck:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7zM7 18.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM18 18.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>',
+  gift:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11h16v9H4zM3 7h18v4H3zM12 7v13M12 7s-1-4-3.5-4S7 7 12 7ZM12 7s1-4 3.5-4S17 7 12 7Z"/></svg>',
+  arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  spark:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 5.6L19 9l-5.4 1.4L12 16l-1.6-5.6L5 9l5.4-1.4L12 2Z"/></svg>',
+  tag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12V4h8l9 9-8 8-9-9Z"/><circle cx="7.5" cy="7.5" r="1.3" fill="currentColor"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-10"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5h.01"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg>',
+  rotate:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v4h-4"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'
+};
+
+/* ---------------- STATE ---------------- */
+const FREE_SHIP = 1499;          // umbral real de envío gratis
+const GIFT = 2200;               // umbral del REGALO sugerido (recalibrado vs ~$3,000)
+const money = n => '$'+n.toLocaleString('es-MX')+' ';
+
+let items = [
+  {id:'undie', name:'Seamless Undie Set (Bra + Tanga)', size:'L', color:'Negro', qty:2, price:749, was:974, icon:'bra', low:false}
+];
+
+const crossSell = [
+  {id:'cover', name:'SOULSKIN · Triangle Covers', price:249, was:349, icon:'skin', skin:true, sized:false, badge:'Suma piezas', nudge:'Suma 1 pieza → sube a 20%'},
+  {id:'tape',  name:'SOULSKIN · Boob Tape', price:199, was:299, icon:'skin', skin:true, sized:false, badge:null, nudge:'Add fácil para llegar a envío gratis'},
+  {id:'tiroalto', name:'Seamless Panties Tiro Alto (5 pzs)', price:799, was:1039, icon:'panty', skin:false, sized:true, badge:'Más vendido', nudge:null},
+  {id:'strapless', name:'Seamless Strapless Bra', price:599, was:779, icon:'bra', skin:false, sized:true, badge:'100% convierte', nudge:null}
+];
+
+let view = 'after';
+let showAnno = true;
+
+/* ---------------- RENDER: AFTER ---------------- */
+function calc(){
+  let sub=0, was=0, pieces=0;
+  items.forEach(it=>{ sub+=it.price*it.qty; was+=it.was*it.qty; pieces+=it.qty; });
+  return {sub, was, save:was-sub, pieces};
+}
+
+function ladderTier(p){
+  if(p>=4) return {cur:3,label:'25%'};
+  if(p===3) return {cur:2,label:'20%'};
+  return {cur:1,label:'15%'}; // 2 o menos
+}
+
+function rewardHTML(){
+  const {sub,pieces}=calc();
+  const tiers=[{pz:'2 pzs',pc:'−15%'},{pz:'3 pzs',pc:'−20%'},{pz:'4+ pzs',pc:'−25%'}];
+  const t=ladderTier(pieces);
+  let steps=tiers.map((x,i)=>{
+    let cls = i<t.cur-1?'done':(i===t.cur-1?'current':'');
+    if(i<t.cur-1) cls='done';
+    if(i===t.cur-1) cls='current';
+    return `<div class="step ${cls}"><span class="tick">${I.check}</span><div class="pz">${x.pz}</div><div class="pc">${x.pc}</div></div>`;
+  }).join('');
+
+  // nudge para subir de tier
+  let nextTxt='';
+  if(pieces<4){
+    const need = pieces<2 ? 2-pieces : 1;
+    const nextPc = pieces<2?'15%':(pieces===2?'20%':'25%');
+    nextTxt = `Agrega <b>${need} pieza${need>1?'s':''}</b> y sube a <b>${nextPc}</b> de descuento.`;
+  } else {
+    nextTxt = `¡Máximo descuento aplicado: <b>25%</b> por 4+ piezas! 🎉`;
+  }
+
+  // barra de envío + regalo
+  const pct = Math.min(100, (sub/GIFT)*100);
+  const shipPct = (FREE_SHIP/GIFT)*100;
+  const shipHit = sub>=FREE_SHIP, giftHit = sub>=GIFT;
+  let shipMsg;
+  if(!shipHit) shipMsg = `Te faltan <b>${money(FREE_SHIP-sub).trim()}</b> para <b>envío gratis</b>.`;
+  else if(!giftHit) shipMsg = `<span class="win">✓ Envío gratis desbloqueado.</span> Te faltan <b>${money(GIFT-sub).trim()}</b> para tu <b>Tote Bag de regalo</b>.`;
+  else shipMsg = `<span class="win">✓ ¡Envío gratis + Tote Bag de regalo desbloqueados!</span>`;
+
+  return `
+  <div class="reward" data-anno-target="1">
+    <span class="anno-badge" style="top:-12px;left:-12px">1</span>
+    <div class="reward-top">
+      <div class="reward-head">Promo <b>Summer Souls</b> · más piezas, más descuento</div>
+    </div>
+    <div class="ladder">${steps}</div>
+    <div class="ladder-nudge">${I.spark}<span>${nextTxt}</span></div>
+
+    <div class="reward-sep"></div>
+
+    <div class="ship" data-anno-target="2" style="position:relative">
+      <span class="anno-badge" style="top:-12px;right:-12px;left:auto">2</span>
+      <div class="ship-msg">${shipMsg}</div>
+      <div class="bar">
+        <div class="bar-fill" style="width:${pct}%"></div>
+        <div class="node ${shipHit?'hit':''}" style="left:${shipPct}%">${I.truck}</div>
+        <div class="node ${giftHit?'hit':''}" style="left:100%">${I.gift}</div>
+      </div>
+      <div class="node-labels">
+        <span class="${shipHit?'hitL':''}">Envío gratis · ${money(FREE_SHIP).trim()}</span>
+        <span class="l2 ${giftHit?'hitL':''}">Tote Bag · ${money(GIFT).trim()} <span class="suggest-tag">(sugerido)</span></span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function itemHTML(it){
+  const skin = it.icon==='skin'?'skin':'';
+  return `
+  <div class="item">
+    <div class="thumb ${skin}">${I[it.icon]}</div>
+    <div class="it-main">
+      <div class="it-name">${it.name}</div>
+      <div class="it-variant">
+        <span class="pill">Talla ${it.size}</span>
+        <span class="pill">${it.color}</span>
+      </div>
+      ${it.low?`<div class="lowstock">Pocas piezas</div>`:''}
+      <div class="qty">
+        <button onclick="chQty('${it.id}',-1)">−</button>
+        <span>${it.qty}</span>
+        <button onclick="chQty('${it.id}',1)">+</button>
+      </div>
+    </div>
+    <div class="it-right">
+      <button class="rm" onclick="rmItem('${it.id}')" title="Quitar">✕</button>
+      <div style="text-align:right">
+        <div class="price-was">${money(it.was*it.qty)}</div>
+        <div class="price-now">${money(it.price*it.qty)}</div>
+        <div class="save-chip">−${money((it.was-it.price)*it.qty).trim()}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function savingsHTML(){
+  const {save}=calc();
+  return `
+  <div class="savings-band" data-anno-target="3" style="position:relative">
+    <span class="anno-badge" style="top:-12px;left:-12px">3</span>
+    <div class="sb-l">
+      <div class="sb-ic">${I.tag}</div>
+      <div><div class="sb-t">Tu ahorro de hoy</div><div class="sb-amt" id="saveAmt">${money(save)}</div></div>
+    </div>
+    <div style="font-size:11px;color:#9fb0c8;font-weight:600;text-align:right;max-width:120px">vs. precio regular</div>
+  </div>`;
+}
+
+function xcardHTML(p){
+  const skin = p.skin?'skin':'';
+  const badge = p.badge?`<span class="xbadge">${p.badge}</span>`:'';
+  const nudge = p.nudge?`<div class="xnudge">${I.arrow}${p.nudge}</div>`:'';
+  return `
+  <div class="xcard" id="xc-${p.id}">
+    <div class="xthumb ${skin}">${badge}${I[p.icon]}</div>
+    <div class="xinfo">
+      <div class="xname">${p.name}</div>
+      <div class="xprice"><span class="xnow">${money(p.price)}</span><span class="xwas">${money(p.was)}</span></div>
+      ${nudge}
+    </div>
+    <button class="add-btn" onclick="addX('${p.id}',${p.sized})">${p.sized?'Elegir talla':'Agregar'}</button>
+    <div class="size-row" id="sz-${p.id}">
+      <span class="lbl">Talla:</span>
+      ${['S','M','L','XL'].map(s=>`<button class="sz" onclick="pickSz('${p.id}','${s}',this)">${s}</button>`).join('')}
+      <button class="sz-confirm" id="szc-${p.id}" onclick="confirmX('${p.id}')">Agregar</button>
+    </div>
+  </div>`;
+}
+
+function footHTML(){
+  const {sub,save}=calc();
+  return `
+  <div class="foot">
+    <div class="trust" data-anno-target="8" style="position:relative">
+      <span class="anno-badge" style="top:-13px;left:-12px">8</span>
+      <div>${I.truck}Envío gratis +$1,499</div>
+      <div>${I.rotate}Devolución 30 días</div>
+      <div>${I.lock}Pago seguro</div>
+    </div>
+    <div class="totrow">
+      <div class="tl">Total<small id="footSave">Ahorras ${money(save)}</small></div>
+      <div class="tr"><div class="amt" id="footTot">${money(sub)}</div><div class="ship">Envío: ${sub>=FREE_SHIP?'Gratis':'calculado al pagar'}</div></div>
+    </div>
+    <div class="express" data-anno-target="7" style="position:relative">
+      <span class="anno-badge" style="top:-13px;right:-12px;left:auto">7</span>
+      <button class="xp apple">Apple Pay</button>
+      <button class="xp shop">Shop Pay</button>
+    </div>
+    <button class="cta">Pagar ahora</button>
+    <div class="pay-icons">
+      <span class="pi-visa">VISA</span><span class="pi-mc">MC</span><span class="pi-amex">AMEX</span><span class="pi-ap">Pay</span><span class="pi-gp">GPay</span>
+    </div>
+  </div>`;
+}
+
+function renderAfter(){
+  const body = `
+    <div class="c-head">
+      <div class="ttl"><span class="wm">Tu carrito</span><span class="cnt">${items.reduce((a,b)=>a+b.qty,0)} artículos</span></div>
+      <button class="c-close">✕ Cerrar</button>
+    </div>
+    <div class="body-pad">
+      ${rewardHTML()}
+      <div class="sec-eyebrow">En tu carrito</div>
+      ${items.length?items.map(itemHTML).join(''):'<div style="text-align:center;color:var(--gray);padding:30px 0;font-size:13px">Tu carrito está vacío</div>'}
+      ${items.length?savingsHTML():''}
+      <div class="sec-eyebrow" data-anno-target="4" style="position:relative"><span class="anno-badge" style="top:-11px;right:-6px;left:auto">4</span>Completa tu set</div>
+      <div class="xs" data-anno-target="5" style="position:relative">
+        <span class="anno-badge" style="top:-12px;right:-4px;left:auto">5</span>
+        ${crossSell.map(xcardHTML).join('')}
+      </div>
+      <div class="promo-row" data-anno-target="6" style="position:relative">
+        <span class="anno-badge" style="top:-11px;right:-6px;left:auto">6</span>
+        <button class="promo-link" id="promoLink" onclick="togglePromo()">${I.tag}¿Tienes un código de descuento?</button>
+        <div class="promo-box" id="promoBox">
+          <div class="promo-input"><input placeholder="Ingresa tu código"><button>Aplicar</button></div>
+          <div class="promo-note">${I.info}<div><b>La promo Summer Souls ya está aplicada.</b> No se combina con el cupón de 10% de primera compra (solo una promoción a la vez).</div></div>
+        </div>
+      </div>
+    </div>
+    ${footHTML()}`;
+  document.getElementById('scroll').innerHTML = body;
+  applyAnno();
+}
+
+/* ---------------- RENDER: BEFORE (réplica del actual) ---------------- */
+function renderBefore(){
+  document.getElementById('scroll').innerHTML = `
+    <div class="c-head"><div class="ttl"><span class="wm">Tu Carrito</span></div><button class="c-close">✕ Cerrar</button></div>
+    <div class="b-bar-wrap">
+      <div class="b-bar-msg">Agrega MXN 1,502 más para obtener una Tote Bag Gratis con este pedido</div>
+      <div class="b-track">
+        <div class="b-fill"></div>
+        <div class="b-mile hit" style="left:48%"><div class="dotm">${I.check}</div><div class="lbm">¡Envío gratis!</div></div>
+        <div class="b-mile" style="left:100%"><div class="dotm" style="border-color:#cdbfa0">${I.gift}</div><div class="lbm">Tote Bag<br>Gratis</div></div>
+      </div>
+    </div>
+    <div class="body-pad" style="padding-bottom:30px">
+      <div class="item" style="border-bottom:1px solid var(--line)">
+        <div class="thumb">${I.bra}</div>
+        <div class="it-main">
+          <div class="it-name">Seamless Undie Set (Bra + Tanga)</div>
+          <div class="it-variant" style="color:var(--gray);font-size:12px;margin-top:6px">L · Negro</div>
+          <div class="qty"><button>−</button><span>2</span><button>+</button></div>
+        </div>
+        <div class="it-right"><button class="rm">✕</button><div style="text-align:right"><div class="price-was">MXN 1,948</div><div class="price-now">MXN 1,498</div></div></div>
+      </div>
+      <div class="b-cross">También te puede interesar...</div>
+      ${[['Seamless Set (Bra + High Waist)','MXN 1,169','MXN 899','bra'],
+         ['Seamless Tangas Corte Bajo (5 piezas)','MXN 974','MXN 749','panty'],
+         ['Seamless Strapless Bra','MXN 779','MXN 599','bra'],
+         ['Tangas Seamless Tiro Alto (6 piezas)','MXN 1,039','MXN 799','panty']]
+         .map(p=>`<div class="xcard" style="grid-template-columns:48px 1fr auto;margin-bottom:9px">
+            <div class="xthumb" style="width:48px;height:48px">${I[p[3]]}</div>
+            <div class="xinfo"><div class="xname" style="font-size:12.5px">${p[0]}</div><div class="xprice"><span class="xwas">${p[1]}</span><span class="xnow">${p[2]}</span></div></div>
+            <button class="add-btn" style="background:var(--gold);border-color:var(--gold);color:#1c1b19">Agregar</button></div>`).join('')}
+      <div style="height:50px"></div>
+      <div class="b-foot" style="border-radius:0;padding-left:0;padding-right:0">
+        <div class="b-disc"><input placeholder="Aplicar código de descuento"><button>Aplicar</button></div>
+        <div class="b-line"><span>Envío</span><span>Gratis</span></div>
+        <div class="b-tot"><span>Total</span><span>MXN 1,498</span></div>
+        <button class="b-cta">Pagar Ahora</button>
+        <div class="pay-icons" style="opacity:.8;margin-top:14px"><span class="pi-visa">VISA</span><span class="pi-mc">MC</span><span class="pi-amex">AMEX</span><span class="pi-ap">Pay</span><span class="pi-gp">GPay</span></div>
+      </div>
+    </div>`;
+}
+
+/* ---------------- INTERACTIONS ---------------- */
+function chQty(id,d){
+  const it=items.find(x=>x.id===id); if(!it) return;
+  it.qty=Math.max(1,it.qty+d); renderAfter();
+}
+function rmItem(id){ items=items.filter(x=>x.id!==id); renderAfter(); }
+
+function addX(id,sized){
+  if(sized){ // abrir picker de talla inline
+    const row=document.getElementById('sz-'+id);
+    row.classList.toggle('show');
+    return;
+  }
+  const p=crossSell.find(x=>x.id===id);
+  if(items.find(x=>x.id===id)){ items.find(x=>x.id===id).qty++; }
+  else items.push({id:p.id,name:p.name,size:'Única',color:'Skin',qty:1,price:p.price,was:p.was,icon:p.icon,low:false});
+  renderAfter();
+}
+let pendingSz={};
+function pickSz(id,s,el){
+  pendingSz[id]=s;
+  el.parentElement.querySelectorAll('.sz').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('szc-'+id).classList.add('ready');
+}
+function confirmX(id){
+  const s=pendingSz[id]; if(!s) return;
+  const p=crossSell.find(x=>x.id===id);
+  const low = id==='basic'; // ejemplo escasez
+  items.push({id:p.id+'-'+s,name:p.name,size:s,color:'Negro',qty:1,price:p.price,was:p.was,icon:p.icon,low:(id==='strapless')});
+  renderAfter();
+}
+function togglePromo(){
+  document.getElementById('promoBox').classList.toggle('show');
+  document.getElementById('promoLink').classList.toggle('open');
+}
+
+/* ---------------- LEGEND / ANNOTATIONS ---------------- */
+const LEGEND = [
+  ['Ladder de descuento por volumen','Antes no estaba. Muestra la promo <em>15/20/25% por 2/3/4+ piezas</em> y empuja “agrega 1 pieza y sube de nivel”. Sube directamente las piezas por pedido — lo que pide tu estrategia de junio.'],
+  ['Barra de envío gratis enfocada','Tu AOV ($1,366) está a un paso de $1,499. La barra que muestra “te faltan $X” es <em>tu palanca de AOV más rápida</em>. El regalo pasa a ser meta secundaria, no la principal.'],
+  ['Resumen de ahorro visible','“Estás ahorrando $X” refuerza el valor y juega con la aversión a la pérdida. Da una razón concreta para no abandonar el carrito.'],
+  ['Cross-sell con SOULSKIN primero','En vez de multipacks de $749, lidera con accesorios de bajo ticket ($199–$249). Es un “agrega 1 pieza” fácil que sube de tier, acerca a envío gratis y <em>rota tu sobre-inventario (~8,744 pzs)</em>.'],
+  ['Talla inline en el cross-sell','El “Agregar” de productos con talla pide la talla sin salir del carrito. Evita adds de talla equivocada, fricción y devoluciones.'],
+  ['Código colapsado + no acumulable','El campo de cupón se esconde tras un link (menos fuga por “buscar códigos”) y deja claro que la promo <em>no se combina</em> con el 10% — justo la confusión que tu doc pide evitar.'],
+  ['Footer fijo + checkout exprés','Total, ahorro y CTA siempre visibles. Apple/Shop Pay reducen fricción en el 95% móvil. <em>Nota:</em> el color del botón debe heredar la variante del A/B test en curso.'],
+  ['Confianza y escasez honesta','Envío, devoluciones y pago seguro junto al CTA; y un sello “Pocas piezas” solo donde el inventario real es bajo (p. ej. Basic 6pz, 92 disp.).']
+];
+function buildLegend(){
+  document.getElementById('legendList').innerHTML = LEGEND.map((l,i)=>
+    `<div class="lg-item"><div class="lg-n">${i+1}</div><div class="lg-t"><b>${l[0]}</b><span>${l[1]}</span></div></div>`).join('');
+}
+function applyAnno(){
+  document.getElementById('scroll').classList.toggle('show-anno', showAnno && view==='after');
+}
+
+/* ---------------- VIEW SWITCH ---------------- */
+function setView(v){
+  view=v;
+  document.querySelectorAll('#viewSeg button').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  document.getElementById('cap').innerHTML = v==='after'
+    ? '<b>Después</b> — carrito propuesto · mobile-first (95% del tráfico es móvil)'
+    : '<b>Antes</b> — carrito actual (réplica del screenshot)';
+  // mejoras solo en "después"
+  document.getElementById('mejBtn').style.opacity = v==='after'?'1':'.4';
+  document.getElementById('mejBtn').style.pointerEvents = v==='after'?'auto':'none';
+  document.getElementById('legend').classList.toggle('show', showAnno && v==='after');
+  if(v==='after') renderAfter(); else renderBefore();
+}
+document.querySelectorAll('#viewSeg button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+document.getElementById('mejBtn').onclick=function(){
+  showAnno=!showAnno;
+  this.classList.toggle('on',showAnno);
+  document.getElementById('legend').classList.toggle('show',showAnno && view==='after');
+  applyAnno();
+};
+
+/* init */
+buildLegend();
+setView('after');
+</script>
+</body>
+</html>
