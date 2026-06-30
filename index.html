@@ -10,8 +10,8 @@
 <style>
   :root{
     --cream:#F4E7D6; --cream-deep:#EADBC6; --cream-soft:#FBF5EC;
-    --gold:#BF9F5C; --gold-deep:#A6884A; --gold-tint:#F2E9D6;
-    --ink:#14294A; --ink-soft:#2C4063;
+    --gold:#BD9C5D; --gold-deep:#A6884A; --gold-tint:#F3EAD6;
+    --ink:#16304E; --ink-soft:#2C4063;
     --black:#1C1B19; --gray:#8C857B; --gray-soft:#B7B0A6;
     --line:#ECE6DD; --line-soft:#F3EEE6;
     --bg:#FFFFFF; --backdrop:#E7DFD2;
@@ -105,9 +105,9 @@
   .step .pc{font-size:15px;font-weight:800;color:var(--black);margin-top:1px}
   .step.done{background:var(--gold-tint);border-color:#e6d4a8}
   .step.done .pc{color:var(--gold-deep)}
-  .step.current{background:var(--gold);border-color:var(--gold-deep);box-shadow:0 6px 14px -6px rgba(191,159,92,.7)}
-  .step.current .pz,.step.current .pc{color:#fff}
-  .step .tick{position:absolute;top:-7px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--gold-deep);color:#fff;font-size:11px;display:none;align-items:center;justify-content:center;border:2px solid #fff}
+  .step.current{background:var(--gold);border-color:var(--gold-deep);box-shadow:0 5px 12px -6px rgba(166,136,74,.6)}
+  .step.current .pz,.step.current .pc{color:#1C1B19}
+  .step .tick{position:absolute;top:-7px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--gold);color:#1C1B19;font-size:11px;display:none;align-items:center;justify-content:center;border:2px solid #fff}
   .step.done .tick{display:flex}
   .ladder-nudge{font-size:12px;color:var(--ink-soft);margin-top:9px;font-weight:600;display:flex;align-items:center;gap:7px}
   .ladder-nudge svg{width:14px;height:14px;flex:0 0 auto;color:var(--gold-deep)}
@@ -119,23 +119,23 @@
   .ship-msg b{color:var(--gold-deep)}
   .ship-msg.win b{color:var(--ink)}
   .bar{height:9px;background:var(--cream-deep);border-radius:999px;position:relative;overflow:visible}
-  .bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-deep));border-radius:999px;transition:width .4s cubic-bezier(.4,0,.2,1);position:relative}
+  .bar-fill{height:100%;background:var(--gold);border-radius:999px;transition:width .4s cubic-bezier(.4,0,.2,1);position:relative}
   .node{position:absolute;top:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid var(--cream-deep);display:flex;align-items:center;justify-content:center;z-index:2}
-  .node.hit{border-color:var(--gold-deep);background:var(--gold-deep)}
+  .node.hit{border-color:var(--gold);background:var(--gold)}
   .node svg{width:9px;height:9px;color:var(--gray-soft)}
-  .node.hit svg{color:#fff}
+  .node.hit svg{color:#1C1B19}
   .node-labels{display:flex;justify-content:space-between;font-size:10.5px;color:var(--gray);font-weight:600;margin-top:2px}
   .node-labels .l2{text-align:right}
   .node-labels .hitL{color:var(--gold-deep)}
   .suggest-tag{font-size:9.5px;color:var(--gray-soft);font-style:italic}
 
   /* savings band */
-  .savings-band{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--ink);color:#fff;border-radius:13px;padding:13px 15px;margin-top:14px}
+  .savings-band{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--gold-tint);border:1px solid #E9DBB7;border-radius:13px;padding:13px 15px;margin-top:14px}
   .savings-band .sb-l{display:flex;align-items:center;gap:10px}
-  .savings-band .sb-ic{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center}
-  .savings-band .sb-ic svg{width:18px;height:18px;color:var(--gold)}
-  .savings-band .sb-t{font-size:12px;font-weight:600;color:#cdd6e6}
-  .savings-band .sb-amt{font-size:17px;font-weight:800;color:#fff;line-height:1.1}
+  .savings-band .sb-ic{width:34px;height:34px;border-radius:9px;background:#fff;display:flex;align-items:center;justify-content:center}
+  .savings-band .sb-ic svg{width:18px;height:18px;color:var(--gold-deep)}
+  .savings-band .sb-t{font-size:12px;font-weight:600;color:#8C7B53}
+  .savings-band .sb-amt{font-size:18px;font-weight:800;color:var(--ink);line-height:1.1}
 
   /* cross-sell */
   .xs{display:flex;flex-direction:column;gap:10px}
@@ -152,16 +152,16 @@
   .xwas{font-size:11px;color:var(--gray-soft);text-decoration:line-through}
   .xnudge{font-size:10.5px;color:var(--gold-deep);font-weight:700;margin-top:4px;display:flex;align-items:center;gap:5px}
   .xnudge svg{width:11px;height:11px}
-  .add-btn{border:1.5px solid var(--ink);background:#fff;color:var(--ink);font:inherit;font-size:12px;font-weight:700;padding:8px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:.16s}
-  .add-btn:hover{background:var(--ink);color:#fff}
-  .add-btn.added{background:var(--gold-tint);border-color:var(--gold);color:var(--gold-deep);pointer-events:none}
+  .add-btn{border:0;background:var(--gold);color:#1C1B19;font:inherit;font-size:12px;font-weight:700;padding:9px 16px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:.16s}
+  .add-btn:hover{background:var(--gold-deep)}
+  .add-btn.added{background:var(--gold-tint);color:var(--gold-deep);pointer-events:none}
   /* inline size picker */
   .size-row{grid-column:1/-1;display:none;gap:6px;align-items:center;padding-top:10px;margin-top:4px;border-top:1px dashed var(--line)}
   .size-row.show{display:flex;flex-wrap:wrap}
   .size-row .lbl{font-size:11px;font-weight:700;color:var(--gray);margin-right:2px}
   .sz{font-size:12px;font-weight:700;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 11px;cursor:pointer;transition:.14s}
   .sz:hover,.sz.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
-  .sz-confirm{margin-left:auto;font-size:12px;font-weight:700;color:#fff;background:var(--gold);border:0;border-radius:999px;padding:7px 14px;cursor:pointer;opacity:.45;pointer-events:none;transition:.16s}
+  .sz-confirm{margin-left:auto;font-size:12px;font-weight:700;color:#1C1B19;background:var(--gold);border:0;border-radius:8px;padding:7px 14px;cursor:pointer;opacity:.45;pointer-events:none;transition:.16s}
   .sz-confirm.ready{opacity:1;pointer-events:auto}
 
   /* discount collapsed */
@@ -175,7 +175,8 @@
   .promo-input{display:flex;gap:8px}
   .promo-input input{flex:1;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font:inherit;font-size:13px;background:var(--cream-soft)}
   .promo-input input::placeholder{color:var(--gray-soft)}
-  .promo-input button{border:0;background:var(--ink);color:#fff;font:inherit;font-weight:700;font-size:13px;padding:0 18px;border-radius:10px;cursor:pointer}
+  .promo-input button{border:1px solid #D8D1C5;background:#fff;color:var(--black);font:inherit;font-weight:700;font-size:13px;padding:0 18px;border-radius:10px;cursor:pointer}
+  .promo-input button:hover{background:var(--cream-soft)}
   .promo-note{font-size:11px;color:var(--gray);margin-top:9px;display:flex;gap:7px;line-height:1.4;background:var(--cream-soft);border-radius:9px;padding:9px 11px}
   .promo-note svg{width:14px;height:14px;flex:0 0 auto;color:var(--gold-deep);margin-top:1px}
   .promo-note b{color:var(--ink)}
@@ -196,7 +197,7 @@
   .xp.apple{background:#000;color:#fff}
   .xp.shop{background:#5A31F4;color:#fff}
   .xp svg{height:16px}
-  .cta{width:100%;height:52px;border:0;border-radius:13px;background:var(--gold);color:#fff;font:inherit;font-size:15.5px;font-weight:800;letter-spacing:.01em;cursor:pointer;box-shadow:0 10px 22px -10px rgba(191,159,92,.85);transition:.16s}
+  .cta{width:100%;height:52px;border:0;border-radius:8px;background:var(--gold);color:#1C1B19;font:inherit;font-size:15.5px;font-weight:800;letter-spacing:.01em;cursor:pointer;box-shadow:0 5px 14px -8px rgba(166,136,74,.55);transition:.16s}
   .cta:hover{background:var(--gold-deep)}
   .pay-icons{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:11px;opacity:.85}
   .pay-icons span{font-size:9px;font-weight:800;color:#fff;padding:3px 6px;border-radius:4px;letter-spacing:.02em}
@@ -210,7 +211,7 @@
   .b-fill{height:100%;width:48%;background:var(--gold);border-radius:999px}
   .b-mile{position:absolute;top:50%;transform:translate(-50%,-50%);text-align:center}
   .b-mile .dotm{width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid var(--cream-deep);display:flex;align-items:center;justify-content:center;margin:0 auto}
-  .b-mile.hit .dotm{background:var(--gold);border-color:var(--gold);color:#fff;font-size:12px}
+  .b-mile.hit .dotm{background:var(--gold);border-color:var(--gold);color:#1C1B19;font-size:12px}
   .b-mile .lbm{font-size:9.5px;color:var(--gray);font-weight:600;margin-top:5px;white-space:nowrap}
   .b-cross{font-size:13px;font-weight:700;color:var(--ink);text-align:center;margin:18px 0 12px}
   .b-foot{padding:14px 18px 18px;border-top:1px solid var(--line)}
@@ -428,7 +429,7 @@ function savingsHTML(){
       <div class="sb-ic">${I.tag}</div>
       <div><div class="sb-t">Tu ahorro de hoy</div><div class="sb-amt" id="saveAmt">${money(save)}</div></div>
     </div>
-    <div style="font-size:11px;color:#9fb0c8;font-weight:600;text-align:right;max-width:120px">vs. precio regular</div>
+    <div style="font-size:11px;color:#B0A074;font-weight:600;text-align:right;max-width:120px">vs. precio regular</div>
   </div>`;
 }
 
@@ -472,7 +473,7 @@ function footHTML(){
       <button class="xp apple">Apple Pay</button>
       <button class="xp shop">Shop Pay</button>
     </div>
-    <button class="cta">Pagar ahora</button>
+    <button class="cta">Pagar Ahora</button>
     <div class="pay-icons">
       <span class="pi-visa">VISA</span><span class="pi-mc">MC</span><span class="pi-amex">AMEX</span><span class="pi-ap">Pay</span><span class="pi-gp">GPay</span>
     </div>
@@ -482,7 +483,7 @@ function footHTML(){
 function renderAfter(){
   const body = `
     <div class="c-head">
-      <div class="ttl"><span class="wm">Tu carrito</span><span class="cnt">${items.reduce((a,b)=>a+b.qty,0)} artículos</span></div>
+      <div class="ttl"><span class="wm">Tu Carrito</span><span class="cnt">${items.reduce((a,b)=>a+b.qty,0)} artículos</span></div>
       <button class="c-close">✕ Cerrar</button>
     </div>
     <div class="body-pad">
